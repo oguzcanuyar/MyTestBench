@@ -94,11 +94,13 @@ Material:
     - _radius: 0.5
     - angularFadeMult: 0.238
     - angularOffset: 1
-    - centerOffSetY: -0.5
+    - centerOffSetY: 0.379
     - centerOffsetX: 0
+    - centerOffsetY: 0
+    - centerOffsety: 0
     - centerX: 0
     - centerY: 0
-    - fadeMult: 0.839
+    - fadeMult: 1
     - timeMult: 25
     m_Colors:
     - PaintColor: {r: 1, g: 0.09465383, b: 0, a: 1}
