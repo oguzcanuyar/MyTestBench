@@ -6,6 +6,7 @@ Shader "Fomo/JapaneseSunShader"
         Radius ("Circle Radius", Range(0,1)) = 1
         DivisionCount ("Division Count", Int) = 4
         PaintColor ("Paint Color", Color) = (1,1,1,1)
+        _SecondaryColor ("Secondary Color", Color) = (1, 1, 1, 1)
         timeMult ("Rotation Speed", float) = 0
         fadeMult ("Fade Multiplier", Range(0,1)) = 0
         angularFadeMult ("Angular Fade Multiplier", Range(0,1)) = 0
@@ -16,8 +17,6 @@ Shader "Fomo/JapaneseSunShader"
         _NoiseTex ("Noise Tex", 2D) = "white"
         _FlowStrength ("Flow Strength", Float) = 1
         _FlowSpeed ("Flow Speed", Float) = 1
-        _DivisionFactor ("Division Factor", Float) = 10
-        _DivisionThreshold ("Division Threshold", Float) = 5
         _ScreenY("Screen Y", Float) = 1
         _ScreenX("Screen X", Float) = 1
 
@@ -44,10 +43,9 @@ Shader "Fomo/JapaneseSunShader"
             sampler2D _NoiseTex;
             float _FlowStrength;
             float _FlowSpeed;
-            float _DivisionFactor;
-            float _DivisionThreshold;
             float _ScreenY, _ScreenX;
-
+            fixed4 _SecondaryColor;
+            
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -123,10 +121,15 @@ Shader "Fomo/JapaneseSunShader"
                 {
                     angularDistanceToPivot = minPoint;
                     float4 result = PaintColor;
+                    
                     result.a *= 1 - distance(center, s.uv) * fadeMult * 2 * 0.5 / Radius;
-                    result.a *= 1 - (angularFadeMult * (angularDistanceToPivot * 10) / ((360 / DivisionCount) +
+                    float sideMult = (angularFadeMult * (angularDistanceToPivot * 10) / ((360 / DivisionCount) +
                         angularOffset * 2));
+                    result.a *= 1 - sideMult;
+                    
                     result.a = clamp(result.a, 0, 1);
+
+                    result.rgb = lerp(PaintColor, _SecondaryColor, sideMult);
 
                     return result;
                 }

@@ -66,7 +66,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - DivisionCount: 12.6
+    - DivisionCount: 10.51
     - DivisionSize: 4
     - Radius: 1
     - RotationSpeed: 43.08
@@ -76,8 +76,8 @@ Material:
     - _DivisionFactor: 10
     - _DivisionThreshold: 5
     - _DstBlend: 0
-    - _FlowSpeed: 1
-    - _FlowStrength: 0
+    - _FlowSpeed: 61.54
+    - _FlowStrength: -0.02
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -87,8 +87,8 @@ Material:
     - _Parallax: 0.02
     - _RotationSpeed: 1
     - _ScreenRatio: 0
-    - _ScreenX: 53.7533
-    - _ScreenY: 115.47005
+    - _ScreenX: 1000
+    - _ScreenY: 1000
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -97,20 +97,21 @@ Material:
     - _centerX: 0
     - _centerY: 0
     - _radius: 0.5
-    - angularFadeMult: 0
-    - angularOffset: 9.71
+    - angularFadeMult: 0.353
+    - angularOffset: 50.2
     - centerOffSetY: 0.379
-    - centerOffsetX: 0
-    - centerOffsetY: 0.015
+    - centerOffsetX: -0.048
+    - centerOffsetY: 0.113
     - centerOffsety: 0
     - centerX: 0
     - centerY: 0
-    - fadeMult: 1
-    - timeMult: 25
+    - fadeMult: 0.607
+    - timeMult: 9
     m_Colors:
-    - PaintColor: {r: 1, g: 0.1337345, b: 0, a: 1}
+    - PaintColor: {r: 0.28613687, g: 1, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Pivot: {r: 0.68, g: 0.59, b: 0.5, a: 0.5}
+    - _SecondaryColor: {r: 0.14684942, g: 0.34326014, b: 0.9433962, a: 1}
     - centerPos: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
