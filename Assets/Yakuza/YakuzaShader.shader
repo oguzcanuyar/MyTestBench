@@ -1,4 +1,4 @@
-Shader "Unlit/YakuzaShader"
+Shader "Fomo/JapaneseSunShader"
 {
 
     Properties
@@ -18,7 +18,8 @@ Shader "Unlit/YakuzaShader"
         _FlowSpeed ("Flow Speed", Float) = 1
         _DivisionFactor ("Division Factor", Float) = 10
         _DivisionThreshold ("Division Threshold", Float) = 5
-        
+        _ScreenY("Screen Y", Float) = 1
+        _ScreenX("Screen X", Float) = 1
 
     }
     SubShader
@@ -45,7 +46,7 @@ Shader "Unlit/YakuzaShader"
             float _FlowSpeed;
             float _DivisionFactor;
             float _DivisionThreshold;
-
+            float _ScreenY, _ScreenX;
 
             struct appdata
             {
@@ -69,14 +70,28 @@ Shader "Unlit/YakuzaShader"
 
             fixed4 frag(v2f s) : SV_Target
             {
+                float rate = _ScreenY / _ScreenX;
+                float yRate = 1;
+                float xRate = 1;
+
+                if (rate > 1)
+                    yRate = rate;
+                else
+                    xRate = 1/rate;
+                
+                s.uv.y *= yRate;
+                s.uv.x *= xRate;
+                
                 fixed2 flowOffset = tex2D(
                     _NoiseTex, s.uv + float2(sin(_Time.y * _FlowSpeed), cos(_Time.y * _FlowSpeed)));
                 flowOffset -= fixed2(0.5, 0.5);
                 flowOffset *= _FlowStrength;
 
 
-                float2 imageCenter = (0.5, 0.5);
-                float2 center = float2(centerOffsetX + imageCenter.x, centerOffsetY + imageCenter.y);
+                float2 imageCenter = float2(0.5 * xRate, 0.5 * yRate);
+
+
+                float2 center = float2(xRate*centerOffsetX + imageCenter.x, yRate * centerOffsetY + imageCenter.y);
                 float rotateAngle = _Time * timeMult;
                 float new_u = center.x + (s.uv.x - center.x) * cos(rotateAngle) - (s.uv.y - center.y) *
                     sin(rotateAngle);
@@ -84,24 +99,19 @@ Shader "Unlit/YakuzaShader"
                     cos(rotateAngle);
                 float2 rotatedUV = float2(new_u, new_v);
                 float distanceToOrigin = distance(imageCenter, s.uv);
-                // // return fixed4(distanceToOrigin, 0, 0, 1);
                 s.uv = rotatedUV;
-
                 s.uv += flowOffset;
 
-
-                if (distanceToOrigin > Radius)
+                //float xDist = abs(imageCenter.x - s.uv.x);
+                if (distanceToOrigin > Radius * yRate)
                 {
                     return float4(0, 0, 0, 0); // set it white if in radius
                 }
-                
+
                 float2 dir = s.uv - center;
                 float angle = atan2(dir.y, dir.x);
                 angle = degrees(angle);
                 if (angle < 0) angle += 360;
-                bool isPainted = false;
-
-
                 float angularDistanceToPivot;
 
                 float interval = (360 / DivisionCount);
@@ -111,17 +121,7 @@ Shader "Unlit/YakuzaShader"
 
                 if (minPoint < angularOffset)
                 {
-                    isPainted = true;
                     angularDistanceToPivot = minPoint;
-                }
-                else
-                {
-                    isPainted = false;
-                }
-                
-
-                if (isPainted)
-                {
                     float4 result = PaintColor;
                     result.a *= 1 - distance(center, s.uv) * fadeMult * 2 * 0.5 / Radius;
                     result.a *= 1 - (angularFadeMult * (angularDistanceToPivot * 10) / ((360 / DivisionCount) +
@@ -130,6 +130,8 @@ Shader "Unlit/YakuzaShader"
 
                     return result;
                 }
+
+
                 return float4(0, 0, 0, 0);
             }
             ENDCG

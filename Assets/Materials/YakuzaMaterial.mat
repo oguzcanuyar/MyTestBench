@@ -66,16 +66,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - DivisionCount: 20
+    - DivisionCount: 12.6
     - DivisionSize: 4
-    - Radius: 0.521
+    - Radius: 1
     - RotationSpeed: 43.08
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DivisionFactor: 10
+    - _DivisionThreshold: 5
     - _DstBlend: 0
     - _FlowSpeed: 1
-    - _FlowStrength: 0.05
+    - _FlowStrength: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -84,6 +86,9 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _RotationSpeed: 1
+    - _ScreenRatio: 0
+    - _ScreenX: 53.7533
+    - _ScreenY: 115.47005
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -92,18 +97,18 @@ Material:
     - _centerX: 0
     - _centerY: 0
     - _radius: 0.5
-    - angularFadeMult: 0.238
-    - angularOffset: 1
+    - angularFadeMult: 0
+    - angularOffset: 9.71
     - centerOffSetY: 0.379
     - centerOffsetX: 0
-    - centerOffsetY: 0
+    - centerOffsetY: 0.015
     - centerOffsety: 0
     - centerX: 0
     - centerY: 0
     - fadeMult: 1
     - timeMult: 25
     m_Colors:
-    - PaintColor: {r: 1, g: 0.09465383, b: 0, a: 1}
+    - PaintColor: {r: 1, g: 0.1337345, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Pivot: {r: 0.68, g: 0.59, b: 0.5, a: 0.5}
