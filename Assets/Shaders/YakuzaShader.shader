@@ -64,6 +64,8 @@ Shader "Unlit/YakuzaShader"
 
             fixed4 frag(v2f s) : SV_Target
             {
+                DivisionCount *= 2;
+                
                 fixed2 flowOffset = tex2D(
                     _NoiseTex, s.uv + float2(sin(_Time.y * _FlowSpeed), cos(_Time.y * _FlowSpeed)));
                 flowOffset -= fixed2(0.5, 0.5);
@@ -78,27 +80,20 @@ Shader "Unlit/YakuzaShader"
                 float new_v = center.y + (s.uv.x - center.x) * sin(rotateAngle) + (s.uv.y - center.y) *
                     cos(rotateAngle);
                 float2 rotatedUV = float2(new_u, new_v);
-                float distanceToOrigin = distance(imageCenter, s.uv);
-                // // return fixed4(distanceToOrigin, 0, 0, 1);
                 s.uv = rotatedUV;
-
                 s.uv += flowOffset;
 
-
-                if (distanceToOrigin > Radius)
+                
+                if (distance(center, s.uv) > Radius)
                 {
                     return float4(0, 0, 0, 0); // set it white if in radius
                 }
-
-
-                DivisionCount *= 2;
-
+                
                 float2 dir = s.uv - center;
                 float angle = atan2(dir.y, dir.x);
                 angle = degrees(angle);
                 if (angle < 0) angle += 360;
                 bool isPainted = false;
-
 
                 float angularDistanceToPivot;
                 for (int i = 0; i < DivisionCount; i++)
@@ -119,7 +114,9 @@ Shader "Unlit/YakuzaShader"
                 if (isPainted)
                 {
                     float4 result = PaintColor;
-                    result.a *= 1 - distance(center, s.uv) * fadeMult * 2 * 0.5 / Radius;
+                    float4 distanceToCenterMultiplier = distance(imageCenter, s.uv);
+                    
+                    result.a *= 1 - distanceToCenterMultiplier * fadeMult / Radius;
                     result.a *= 1 - (angularFadeMult * (angularDistanceToPivot * 2) / ((360 / DivisionCount) +
                         angularOffset * 2));
                     result.a = clamp(result.a, 0, 1);
