@@ -16,6 +16,9 @@ Shader "Unlit/YakuzaShader"
         _NoiseTex ("Noise Tex", 2D) = "white"
         _FlowStrength ("Flow Strength", Float) = 1
         _FlowSpeed ("Flow Speed", Float) = 1
+        _DivisionFactor ("Division Factor", Float) = 10
+        _DivisionThreshold ("Division Threshold", Float) = 5
+        
 
     }
     SubShader
@@ -40,6 +43,8 @@ Shader "Unlit/YakuzaShader"
             sampler2D _NoiseTex;
             float _FlowStrength;
             float _FlowSpeed;
+            float _DivisionFactor;
+            float _DivisionThreshold;
 
 
             struct appdata
@@ -64,8 +69,6 @@ Shader "Unlit/YakuzaShader"
 
             fixed4 frag(v2f s) : SV_Target
             {
-                DivisionCount *= 2;
-                
                 fixed2 flowOffset = tex2D(
                     _NoiseTex, s.uv + float2(sin(_Time.y * _FlowSpeed), cos(_Time.y * _FlowSpeed)));
                 flowOffset -= fixed2(0.5, 0.5);
@@ -80,11 +83,14 @@ Shader "Unlit/YakuzaShader"
                 float new_v = center.y + (s.uv.x - center.x) * sin(rotateAngle) + (s.uv.y - center.y) *
                     cos(rotateAngle);
                 float2 rotatedUV = float2(new_u, new_v);
+                float distanceToOrigin = distance(imageCenter, s.uv);
+                // // return fixed4(distanceToOrigin, 0, 0, 1);
                 s.uv = rotatedUV;
+
                 s.uv += flowOffset;
 
-                
-                if (distance(center, s.uv) > Radius)
+
+                if (distanceToOrigin > Radius)
                 {
                     return float4(0, 0, 0, 0); // set it white if in radius
                 }
@@ -95,29 +101,30 @@ Shader "Unlit/YakuzaShader"
                 if (angle < 0) angle += 360;
                 bool isPainted = false;
 
+
                 float angularDistanceToPivot;
-                for (int i = 0; i < DivisionCount; i++)
+
+                float interval = (360 / DivisionCount);
+                float mod = angle % interval;
+                float mod2 = mod - interval;
+                float minPoint = min(abs(mod), abs(mod2));
+
+                if (minPoint < angularOffset)
                 {
-                    float startAngle = i * 360 / DivisionCount;
-                    float endAngle = (i + 1) * 360 / DivisionCount;
-
-                    if (i % 2 == 0 && angle > (startAngle - angularOffset) && angle < endAngle + angularOffset)
-                    {
-                        float centerPivot = (startAngle + endAngle) / 2;
-                        angularDistanceToPivot = abs(centerPivot - angle);
-                        isPainted = true;
-                        break;
-                    }
+                    isPainted = true;
+                    angularDistanceToPivot = minPoint;
                 }
-
+                else
+                {
+                    isPainted = false;
+                }
+                
 
                 if (isPainted)
                 {
                     float4 result = PaintColor;
-                    float4 distanceToCenterMultiplier = distance(imageCenter, s.uv);
-                    
-                    result.a *= 1 - distanceToCenterMultiplier * fadeMult / Radius;
-                    result.a *= 1 - (angularFadeMult * (angularDistanceToPivot * 2) / ((360 / DivisionCount) +
+                    result.a *= 1 - distance(center, s.uv) * fadeMult * 2 * 0.5 / Radius;
+                    result.a *= 1 - (angularFadeMult * (angularDistanceToPivot * 10) / ((360 / DivisionCount) +
                         angularOffset * 2));
                     result.a = clamp(result.a, 0, 1);
 
